@@ -1,0 +1,6 @@
+{
+  "_comment": "Bewusst kleines BEISPIEL-Regelwerk fuer Phase 0, siehe TASKS.md D5 und README.md. Vor jeder Verwendung mit realistischeren Materialzusammensetzungen von Fachleuten pruefen und erweitern.",
+  "denied_elements": ["Pu", "U", "Po", "Ra", "As"],
+  "denied_compounds": ["arsenic trioxide", "hydrofluoric acid", "phosgene"],
+  "max_dopant_fraction_without_review": 0.5
+}
