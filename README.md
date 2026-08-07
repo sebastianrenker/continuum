@@ -1,6 +1,6 @@
 # CONTINUUM
 
-![CI](https://github.com/OWNER/continuum/actions/workflows/ci.yml/badge.svg)
+![CI](https://github.com/sebastianrenker/continuum/actions/workflows/ci.yml/badge.svg)
 ![Python](https://img.shields.io/badge/python-3.10%2B-blue)
 ![License: MIT](https://img.shields.io/badge/license-MIT-green)
 ![Status](https://img.shields.io/badge/status-Phase%200%20prototype-orange)
