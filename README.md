@@ -70,6 +70,23 @@ src/continuum/
 Siehe `ARCHITECTURE.md` für die vollständige Spezifikation je Modul und
 `TASKS.md` für den aktuellen Aufgaben-Backlog.
 
+## RENKER-Plattform
+
+Continuum ist die **LEARN**-Säule der Renker-Plattform — Infrastruktur für
+vertrauenswürdige, autonome KI-Systeme. Gesamtarchitektur und die anderen
+Säulen: [RENKER_PLATFORM.md](RENKER_PLATFORM.md).
+
+```text
+RENKER — ACT (Rencora) · LEARN (Continuum) · SECURE (RenkerVault)
+                         gemeinsames Fundament: renker-core
+```
+
+| Säule | Rolle | Repo |
+| --- | --- | --- |
+| Rencora | ACT | https://github.com/sebastianrenker/rencora |
+| RenkerVault | SECURE | https://github.com/sebastianrenker/renkervault |
+| renker-core-authz | öffentlicher Authorization-Core | https://github.com/sebastianrenker/renker-core-authz |
+
 ## Lizenz / Status
 
 Forschungs-/Konzeptprototyp, kein Produktivsystem. Sicherheitsrelevante
