@@ -1,86 +1,84 @@
-# Sicherheitsmodell und ehrliche Grenzen
+# Security model and honest limits
 
-CONTINUUM ist ein **Phase-0-Architektur-Prototyp** (siehe [`README.md`](README.md),
-[`ROADMAP.md`](ROADMAP.md)) — kein extern auditiertes Produktivsystem. Alle
-„Experimente" laufen gegen eine **simulierte** Zielfunktion, nicht gegen echte
-Laborhardware. Dieses Dokument beschreibt offen, welche Schutzmechanismen im Code
-verankert sind, welche davon in Phase 0 nur als Muster existieren, und was vor jeder
-Verwendung mit realen Materialien zwingend passieren muss.
+CONTINUUM is a **phase-0 architecture prototype** (see [`README.md`](README.md),
+[`ROADMAP.md`](ROADMAP.md)) — not an externally audited production system. All
+"experiments" run against a **simulated** objective function, not against real lab
+hardware. This document openly describes which protection mechanisms are anchored in
+the code, which of them exist in phase 0 only as patterns, and what must mandatorily
+happen before any use with real materials.
 
-> Die Sicherheitsarchitektur ist bewusst *von Anfang an* korrekt angelegt, damit sie
-> in Phase 1 (echte Hardware) nicht nachgerüstet werden muss — nicht, weil in Phase 0
-> bereits etwas Physisches auf dem Spiel stünde.
+> The security architecture is deliberately laid out correctly *from the start*, so
+> that it does not have to be retrofitted in phase 1 (real hardware) — not because
+> anything physical is already at stake in phase 0.
 
 ---
 
-## 1. Governance-Gate und Audit-Log
+## 1. Governance gate and audit log
 
-Jede simulierte „Experimentfreigabe" läuft verpflichtend durch
-`src/continuum/safety/governance.py` — auch in Tests und Demos. Eine Freigabe, die
-dieses Gate umgeht, ist per Projektregel nicht mergefähig (siehe
-[`CLAUDE.md`](CLAUDE.md), Abschnitt 2).
+Every simulated "experiment approval" mandatorily passes through
+`src/continuum/safety/governance.py` — including in tests and demos. An approval that
+bypasses this gate is, by project rule, not mergeable (see
+[`CLAUDE.md`](CLAUDE.md), section 2).
 
-Jeder Schreibzugriff auf den Speicher, jede Konsolidierung und jede
-Governance-Entscheidung wird über `governance.py::audit_log` protokolliert — kein
-stiller State-Change. **Ehrliche Grenze:** Das Audit-Log ist ein Nachvollziehbarkeits-,
-kein Manipulationsschutz-Mechanismus. In Phase 0 gibt es keine kryptographische
-Kette und keinen Schutz gegen einen Angreifer mit Schreibzugriff auf den Log selbst.
+Every write to the store, every consolidation, and every governance decision is logged
+via `governance.py::audit_log` — no silent state change. **Honest limit:** the audit
+log is a traceability mechanism, not a tamper-protection one. In phase 0 there is no
+cryptographic chain and no protection against an attacker with write access to the log
+itself.
 
-## 2. Gefahrstoff-Screening — nur ein Beispiel-Regelwerk
+## 2. Hazardous-material screening — only an example rule set
 
-`src/continuum/safety/hazard_screening.py` enthält ein **exemplarisches** Regelwerk
-zur Veranschaulichung der Architektur. Es ist **kein** geprüfter Sicherheitsstandard
-und deckt reale Gefahrstoffszenarien nicht ab.
+`src/continuum/safety/hazard_screening.py` contains an **example** rule set to
+illustrate the architecture. It is **not** a vetted safety standard and does not cover
+real hazardous-material scenarios.
 
-> ⚠️ **Zwingend:** Vor jeder Verwendung mit realen Materialien muss dieses Regelwerk
-> von Fachleuten (Chemie-/Laborsicherheit) geprüft und erweitert werden (siehe
-> [`TASKS.md`](TASKS.md), D5). Verlasse dich in keinem realen Kontext auf die
-> mitgelieferten Regeln.
+> ⚠️ **Mandatory:** before any use with real materials, this rule set must be reviewed
+> and extended by experts (chemistry/lab safety) (see [`TASKS.md`](TASKS.md), D5). Do
+> not rely on the shipped rules in any real context.
 
-## 3. Anti-Halluzinations-Schicht (Herkunftsnachweis)
+## 3. Anti-hallucination layer (provenance)
 
-Jede Aussage über ein Material, eine Hypothese oder ein Modellergebnis muss über
-`src/continuum/verification/evidence.py` mit einer Herkunftskategorie markiert sein:
-`EXPERIMENTAL`, `PREDICTED` oder `LITERATURE`. Code, der eine unbelegte Behauptung als
-Fakt ausgibt, ist nicht mergefähig. Das ist eine bewusste architektonische Sperre
-gegen das Ausgeben halluzinierter „Ergebnisse" — kein Ersatz für wissenschaftliche
-Validierung der Aussagen selbst.
+Every statement about a material, a hypothesis, or a model result must be tagged via
+`src/continuum/verification/evidence.py` with a provenance category: `EXPERIMENTAL`,
+`PREDICTED`, or `LITERATURE`. Code that outputs an unsubstantiated claim as fact is not
+mergeable. This is a deliberate architectural lock against emitting hallucinated
+"results" — not a substitute for scientific validation of the statements themselves.
 
-## 4. LLM-Grenze und Geheimnisse
+## 4. LLM boundary and secrets
 
-- Alle LLM-Aufrufe laufen ausschließlich über die anbieterunabhängige Schnittstelle
-  `src/continuum/llm/client.py::LLMClient`. Die Standard-Pipeline ist mit
-  `MockLLMClient` **ohne API-Key und ohne Netzwerkzugriff** vollständig lauffähig.
-- Wird bewusst ein echter LLM-Anbieter angebunden, verlassen die übermittelten
-  Prompt-Inhalte den Rechner und unterliegen den Bedingungen dieses Anbieters — das
-  ist eine Eigenschaft der Anbindung, nicht des Prototyps.
-- Es gehören **keine** Schlüssel, Tokens oder Zugangsdaten in Commits. Konfiguration
-  über Umgebungsvariablen, nicht im Repo.
+- All LLM calls run exclusively through the provider-independent interface
+  `src/continuum/llm/client.py::LLMClient`. The default pipeline is fully runnable with
+  `MockLLMClient` **without an API key and without network access**.
+- If a real LLM provider is deliberately connected, the submitted prompt content leaves
+  the machine and is subject to that provider's terms — this is a property of the
+  connection, not of the prototype.
+- **No** keys, tokens, or credentials belong in commits. Configuration via environment
+  variables, not in the repo.
 
-## 5. Bekannte Grenzen (bewusste Phase-0-Kompromisse)
+## 5. Known limits (deliberate phase-0 trade-offs)
 
-1. **Keine echte Laborhardware.** Die robotische Ausführungsschicht ist durch
-   `src/continuum/data/simulated_materials.py` gemockt. Ergebnisse sind simuliert,
-   keine wissenschaftlichen Befunde.
-2. **Gefahrstoff-Regelwerk ist exemplarisch** (Abschnitt 2).
-3. **Audit-Log ist nicht manipulationssicher** (Abschnitt 1).
-4. **Nicht extern auditiert.** Weder Code noch Architektur wurden einer externen
-   Sicherheits- oder Fachprüfung unterzogen.
-5. Echtes kontinuierliches Gewichts-Lernen (LoRA, Konsolidierung) und
-   Hardware-Anbindung sind spätere Phasen — als Interfaces angelegt, nicht als Code
-   (Phasendisziplin, siehe [`ROADMAP.md`](ROADMAP.md)).
+1. **No real lab hardware.** The robotic execution layer is mocked by
+   `src/continuum/data/simulated_materials.py`. Results are simulated, not scientific
+   findings.
+2. **Hazardous-material rule set is exemplary** (section 2).
+3. **Audit log is not tamper-proof** (section 1).
+4. **Not externally audited.** Neither code nor architecture has undergone an external
+   security or domain review.
+5. Real weight-level continual learning (LoRA, consolidation) and hardware connection
+   are later phases — laid out as interfaces, not as code (phase discipline, see
+   [`ROADMAP.md`](ROADMAP.md)).
 
-## 6. Vor einem realen Einsatz zwingend
+## 6. Mandatory before any real deployment
 
-- Fachliche Prüfung und Erweiterung des Gefahrstoff-Screenings (Abschnitt 2).
-- Manipulationssicheres, idealerweise kryptographisch verkettetes Audit-Log.
-- Externe Sicherheits- und Fachprüfung der Governance- und Verifikationslogik.
-- Ein realer, geprüfter Sicherheitsprozess für die Hardware-Ausführungsschicht,
-  bevor Phase 1 überhaupt beginnt.
+- Domain review and extension of the hazardous-material screening (section 2).
+- A tamper-evident, ideally cryptographically chained audit log.
+- External security and domain review of the governance and verification logic.
+- A real, vetted safety process for the hardware execution layer, before phase 1 even
+  begins.
 
-## 7. Schwachstellen melden
+## 7. Reporting vulnerabilities
 
-Sicherheitsprobleme bitte **nicht** öffentlich als Issue melden, sondern privat über
-GitHub **Security Advisories** (Repository → Security → „Report a vulnerability")
-oder per E-Mail an den Maintainer. Bitte Beschreibung, betroffenen Commit,
-Reproduktionsschritte und Auswirkung angeben.
+Please do **not** report security issues publicly as an issue, but privately via GitHub
+**Security Advisories** (Repository → Security → "Report a vulnerability") or by email
+to the maintainer. Please include a description, the affected commit, reproduction
+steps, and impact.

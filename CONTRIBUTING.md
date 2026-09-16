@@ -1,25 +1,26 @@
-# Mitwirken an CONTINUUM
+# Contributing to CONTINUUM
 
-Danke für dein Interesse. CONTINUUM ist ein Phase-0-Architektur-Prototyp mit
-bewusst strenger Disziplin — Beiträge werden an einem hohen Maßstab gemessen.
-Lies vor dem ersten Commit die verbindlichen Arbeitsregeln in
-[`CLAUDE.md`](CLAUDE.md) und die Design-Wahrheit in [`ARCHITECTURE.md`](ARCHITECTURE.md).
+Thanks for your interest. CONTINUUM is a phase-0 architecture prototype with
+deliberately strict discipline — contributions are measured against a high bar.
+Before your first commit, read the binding working rules in
+[`CLAUDE.md`](CLAUDE.md) and the design truth in [`ARCHITECTURE.md`](ARCHITECTURE.md).
 
-## Grundregeln (nicht verhandelbar)
+## Ground rules (non-negotiable)
 
-- **Keine unbelegte Behauptung.** Jede Aussage über Material/Hypothese/Modell wird
-  über `verification/evidence.py` mit `EXPERIMENTAL`/`PREDICTED`/`LITERATURE`
-  markiert. Ohne Herkunftsnachweis nicht mergefähig.
-- **Sicherheits-Gates werden nie umgangen** — auch nicht in Tests oder Demos. Jede
-  „Experimentfreigabe" läuft durch `safety/governance.py`.
-- **Alles ist auditierbar.** Kein stiller State-Change; Speicher-, Konsolidierungs-
-  und Governance-Schritte werden geloggt.
-- **Phasendisziplin.** Nichts aus Phase 2/3 (echtes LoRA-Training, Robotik-Anbindung)
-  bauen, bevor die Akzeptanzkriterien der Vorphase in [`TASKS.md`](TASKS.md) erfüllt
-  sind. Sieht eine Aufgabe nach späterer Phase aus: explizit sagen, nicht mitimplementieren.
-- **Mocks bleiben austauschbar.** LLM-Zugriff nur über `llm/client.py::LLMClient`;
-  `MockLLMClient` muss die Pipeline jederzeit ohne API-Key lauffähig halten.
-- **Keine Geheimnisse** in Commits.
+- **No unsubstantiated claim.** Every statement about a material/hypothesis/model is
+  tagged via `verification/evidence.py` with `EXPERIMENTAL`/`PREDICTED`/`LITERATURE`.
+  Not mergeable without provenance.
+- **Safety gates are never bypassed** — not even in tests or demos. Every "experiment
+  approval" passes through `safety/governance.py`.
+- **Everything is auditable.** No silent state change; store, consolidation, and
+  governance steps are logged.
+- **Phase discipline.** Do not build anything from phase 2/3 (real LoRA training,
+  robotics connection) before the acceptance criteria of the prior phase in
+  [`TASKS.md`](TASKS.md) are met. If a task looks like a later phase: say so
+  explicitly, do not implement it along the way.
+- **Mocks stay swappable.** LLM access only via `llm/client.py::LLMClient`;
+  `MockLLMClient` must keep the pipeline runnable without an API key at all times.
+- **No secrets** in commits.
 
 ## Setup
 
@@ -28,42 +29,43 @@ python -m venv .venv && source .venv/bin/activate   # Windows: .venv\Scripts\act
 pip install -e ".[dev]"
 ```
 
-Python ≥ 3.10. Phase-2-Abhängigkeiten (torch/transformers/peft) sind bewusst
-optional (`.[phase2]`) und für Phase-0-Arbeit nicht nötig.
+Python ≥ 3.10. Phase-2 dependencies (torch/transformers/peft) are deliberately
+optional (`.[phase2]`) and not needed for phase-0 work.
 
-## Lokale Prüfungen (müssen grün sein)
+## Local checks (must be green)
 
 ```bash
 ruff format --check .
 ruff check .
 pytest
-python scripts/run_demo_loop.py     # End-to-End-Demo auf simulierten Daten
+python scripts/run_demo_loop.py     # end-to-end demo on simulated data
 ```
 
-CI führt bei jedem Pull Request `ruff check`, `pytest` und den Demo-Smoke-Test
-(`run_demo_loop.py --rounds 5`) aus; `ruff format --check` ist lokale Konvention.
+CI runs `ruff check`, `pytest`, and the demo smoke test
+(`run_demo_loop.py --rounds 5`) on every pull request; `ruff format --check` is a local
+convention.
 
-## Sicherheitsrelevante Änderungen
+## Security-relevant changes
 
-Alles, was `safety/governance.py`, `safety/hazard_screening.py` oder
-`verification/` berührt, muss:
+Anything touching `safety/governance.py`, `safety/hazard_screening.py`, or
+`verification/` must:
 
-1. einen Test enthalten, der die Grenze gezielt herausfordert (Umgehungsversuch), und
-2. jeden bestehenden Sicherheitstest grün lassen.
+1. include a test that specifically challenges the boundary (a bypass attempt), and
+2. keep every existing security test green.
 
-Schwachstellen bitte **privat** melden — siehe [`SECURITY.md`](SECURITY.md), nicht
-als öffentliches Issue/PR.
+Please report vulnerabilities **privately** — see [`SECURITY.md`](SECURITY.md), not as
+a public issue/PR.
 
 ## Definition of Done
 
-Eine Aufgabe aus [`TASKS.md`](TASKS.md) gilt erst als erledigt, wenn Implementierung
-dem Interface/Docstring entspricht, ein Test existiert und `pytest` grün ist, keine
-Grundregel verletzt wird und `TASKS.md` aktualisiert ist.
+A task from [`TASKS.md`](TASKS.md) is only done when the implementation matches the
+interface/docstring, a test exists and `pytest` is green, no ground rule is violated,
+and `TASKS.md` is updated.
 
-## Stil
+## Style
 
-- Bezeichner (Funktionen, Variablen, Klassen) auf **Englisch**; Docstrings und
-  Kommentare auf **Deutsch** (konsistent mit dem Konzeptpapier).
-- Explizite Typannotationen, `ruff` (Zeilenlänge 100, Ziel `py310`).
-- Interface vor Implementierung: `TODO(Phase X): ...` in Docstrings ist bewusst offen
-  und gemäß der referenzierten Architektur umzusetzen.
+- Identifiers (functions, variables, classes) in **English**; docstrings and comments
+  in **English** as well.
+- Explicit type annotations, `ruff` (line length 100, target `py310`).
+- Interface before implementation: `TODO(Phase X): ...` in docstrings is deliberately
+  open and to be implemented per the referenced architecture.
