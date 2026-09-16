@@ -1,56 +1,51 @@
 # ROADMAP.md
 
-Phasenplan aus dem Konzeptpapier (Kapitel 8), mit Go/No-Go-Kriterien. Dieses
-Repository deckt **Phase 0** ab.
+Phase plan from the concept paper (chapter 8), with go/no-go criteria. This
+repository covers **Phase 0**.
 
-## Phase 0 — Proof of Concept (Monate 1–3, reine Software)
+## Phase 0 — proof of concept (months 1–3, software only)
 
-**Ziel:** Gedächtnissystem + Geschwindigkeit-1-Lernen + Weltmodell +
-Sicherheits-/Verifikationsschicht + Evaluierungs-Harness, alles lauffähig
-auf simulierten Materialdaten. Keine Hardware, kein GPU-Training nötig.
+**Goal:** memory system + speed-1 learning + world model + safety/verification
+layer + evaluation harness, all runnable on simulated materials data. No hardware,
+no GPU training required.
 
-**Go/No-Go-Kriterium für Phase 1:**
-- [ ] `eval.harness.run_full_eval()` läuft fehlerfrei durch und liefert
-      plausible (nicht notwendigerweise perfekte) Werte auf allen sechs Metriken.
-- [ ] `scripts/run_demo_loop.py` durchläuft den vollständigen 11-Schritte-Zyklus
-      (Schritt 6/7 gemockt) mindestens 20 Mal ohne Absturz und mit sinkendem
-      Vorhersagefehler des Weltmodells über die Zeit.
-- [ ] Kein Claim ohne gültige Herkunftskennzeichnung passiert `ClaimChecker`
-      (siehe Tests in `tests/test_verification.py`).
-- [ ] Alle Governance-Entscheidungen sind im Audit-Log nachvollziehbar.
+**Go/no-go criteria for Phase 1:**
+- [ ] `eval.harness.run_full_eval()` runs without error and returns plausible
+      (not necessarily perfect) values on all six metrics.
+- [ ] `scripts/run_demo_loop.py` completes the full 11-step cycle (steps 6/7
+      mocked) at least 20 times without crashing and with a decreasing world-model
+      prediction error over time.
+- [ ] No claim without a valid provenance label passes `ClaimChecker` (see the
+      tests in `tests/test_verification.py`).
+- [ ] All governance decisions are traceable in the audit log.
 
-## Phase 1 — Laborintegration (Monate 4–9)
+## Phase 1 — lab integration (months 4–9)
 
-Anbindung an ein echtes Self-Driving-Lab-Partnerlabor (z. B. über eine
-Robotik-API), ein eng begrenzter Materialtyp. `data/simulated_materials.py`
-wird durch eine echte Implementierung von `run_experiment()` ersetzt, ohne
-dass sich die Schnittstelle ändert. **Nicht Teil dieses Repositories** —
-eigenständiges Nachfolgeprojekt mit Hardware-Partner.
+Connection to a real self-driving-lab partner lab (e.g. via a robotics API), a
+narrowly scoped material type. `data/simulated_materials.py` is replaced by a real
+implementation of `run_experiment()` without the interface changing. **Not part of
+this repository** — a standalone follow-up project with a hardware partner.
 
-## Phase 2 — Aktives Lernen scharf schalten (Monate 10–18)
+## Phase 2 — arm active learning (months 10–18)
 
-`learning/speed2_lora.py` wird von Interface zu echter Implementierung
-(PEFT/LoRA-Training, O-LoRA-Orthogonalität, Contextual Experience Replay
-aus echten Experimentdaten). Voraussetzung: Phase-0-Metriken stabil,
-Phase-1-Datenfluss etabliert.
+`learning/speed2_lora.py` goes from interface to real implementation (PEFT/LoRA
+training, O-LoRA orthogonality, contextual experience replay from real experiment
+data). Prerequisite: Phase 0 metrics stable, Phase 1 data flow established.
 
-## Phase 3 — Konsolidierung & Validierung (Monate 19–30)
+## Phase 3 — consolidation & validation (months 19–30)
 
-`learning/speed3_consolidation.py` wird scharf geschaltet (EWC-basierte
-Distillation). Externe, unabhängige Prüfung der
-Katastrophales-Vergessen-Rate und der Kalibrierungskurve.
+`learning/speed3_consolidation.py` is armed (EWC-based distillation). External,
+independent review of the catastrophic-forgetting rate and the calibration curve.
 
-## Phase 4 — Domänentransfer (ab Monat 30)
+## Phase 4 — domain transfer (from month 30)
 
-Test der Architekturhypothese: Übertragung des domänen-agnostischen Kerns
-(`memory/`, `learning/`, `verification/`, `hypothesis/`) auf eine zweite
-Domäne durch Austausch von `data/simulated_materials.py` und
-`safety/hazard_screening.py` gegen domänenspezifische Äquivalente (siehe
-Konzeptpapier Kapitel 7, Generalisierungstabelle).
+Test of the architecture hypothesis: transferring the domain-agnostic core
+(`memory/`, `learning/`, `verification/`, `hypothesis/`) to a second domain by
+swapping `data/simulated_materials.py` and `safety/hazard_screening.py` for
+domain-specific equivalents (see concept paper chapter 7, generalization table).
 
 ---
 
-**Prinzip für jede Phase:** Ein Scheitern an den Go/No-Go-Kriterien ist ein
-valides Ergebnis. Nicht mehr Kapital/Aufwand in die nächste Phase stecken,
-bevor die aktuelle Phase ihre Kriterien erfüllt — siehe `CLAUDE.md`,
-Prinzip 4 (Phasendisziplin).
+**Principle for every phase:** failing the go/no-go criteria is a valid outcome.
+Do not put more capital/effort into the next phase before the current phase meets
+its criteria — phase discipline.

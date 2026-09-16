@@ -1,18 +1,20 @@
-# Teil der Renker-Plattform
+# Part of the Renker platform
 
-Dieses Repository (**continuum**) ist die Säule **LEARN — autonome Forschungs- und Discovery-Engine** der **Renker**-Plattform — einer Infrastruktur für vertrauenswürdige, autonome KI-Systeme.
+This repository (**continuum**) is the **LEARN** pillar — the autonomous research
+and discovery engine — of the **Renker** platform, an infrastructure for trusted,
+autonomous AI systems.
 
-Die Gesamtarchitektur, die gemeinsamen Primitive (Identity, Permissions, Audit, Policy …) und die Rollen der drei Säulen sind im Fundament-Repo **renker-core** dokumentiert:
+The overall architecture, the shared primitives (identity, permissions, audit,
+policy, …), and the roles of the three pillars are documented in the foundation
+repo **renker-core**:
 
 - **renker-core:** https://github.com/sebastianrenker/renker-core
-- **Plattform-Wiki (im renker-core-Repo):** https://github.com/sebastianrenker/renker-core/blob/main/docs/wiki/Home.md
+- **Platform wiki (in the renker-core repo):** https://github.com/sebastianrenker/renker-core/blob/main/docs/wiki/Home.md
 
-> Hinweis: renker-core ist derzeit ein **privates** Repository; die Links sind für Berechtigte sichtbar.
+## The three pillars
 
-## Die drei Säulen
-
-| Säule | Rolle | Repo |
+| Pillar | Role | Repo |
 | --- | --- | --- |
-| Rencora | ACT | https://github.com/sebastianrenker/rencora |
+| Rencora | ACT | https://github.com/sebastianrenker/rencora-public |
 | RenkerVault | SECURE | https://github.com/sebastianrenker/renkervault |
 | Continuum | LEARN | https://github.com/sebastianrenker/continuum |
