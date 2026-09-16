@@ -20,9 +20,6 @@ technical rationale:
 > hardware (see `ROADMAP.md`). The goal is to show *how* an architecture for
 > genuine continual learning could look — not to be a finished product.
 
-> **For Claude Code / other AI coding agents:** read `CLAUDE.md` first — it
-> holds the binding working rules for this repository.
-
 ## Features
 
 **What works (no API key, no GPU, no hardware):**
@@ -39,7 +36,7 @@ technical rationale:
 **What deliberately does not work yet:** genuine continual weight learning
 (LoRA adapters, consolidation) and the connection to real lab hardware are later
 phases (see `ROADMAP.md`) — laid out as documented interfaces, not as code
-(the "phase discipline" principle, see `CLAUDE.md`).
+(the "phase discipline" principle).
 
 ## Architecture
 
