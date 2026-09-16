@@ -5,59 +5,58 @@
 ![License: MIT](https://img.shields.io/badge/license-MIT-green)
 ![Status](https://img.shields.io/badge/status-Phase%200%20prototype-orange)
 
-> Architektur-Prototyp eines kontinuierlich lernenden autonomen Forschungssystems — ehrlich als Phase 0 gekennzeichnet.
+> Architecture prototype of a continually learning autonomous research system — honestly labelled as Phase 0.
 
-## Überblick
+## Overview
 
-Software-Prototyp (Phase 0) eines kontinuierlich lernenden autonomen
-Forschungssystems, instanziiert am Beispiel autonomer Materialforschung.
-Vollständige technische Begründung:
+A software prototype (Phase 0) of a continually learning autonomous research
+system, instantiated on the example of autonomous materials discovery. Full
+technical rationale:
 [`docs/CONTINUUM_Konzeptpapier.docx`](docs/CONTINUUM_Konzeptpapier.docx).
 
-> **Ehrlicher Status:** Dies ist ein Konzept- und Architektur-Prototyp, kein
-> validiertes wissenschaftliches Ergebnis und kein Produktivsystem. Alle
-> "Experimente" laufen in Phase 0 gegen eine simulierte Zielfunktion, nicht
-> gegen echte Laborhardware (siehe `ROADMAP.md`). Ziel ist zu zeigen, *wie* eine
-> Architektur für echtes kontinuierliches Lernen aussehen könnte — nicht, ein
-> fertiges Produkt zu sein.
+> **Honest status:** this is a concept and architecture prototype — not a
+> validated scientific result and not a production system. In Phase 0 every
+> "experiment" runs against a simulated objective function, not real lab
+> hardware (see `ROADMAP.md`). The goal is to show *how* an architecture for
+> genuine continual learning could look — not to be a finished product.
 
-> **Für Claude Code / andere KI-Coding-Agenten:** Lies zuerst `CLAUDE.md` — dort
-> stehen die verbindlichen Arbeitsregeln für dieses Repository.
+> **For Claude Code / other AI coding agents:** read `CLAUDE.md` first — it
+> holds the binding working rules for this repository.
 
 ## Features
 
-**Was funktioniert (ohne API-Key, ohne GPU, ohne Hardware):**
+**What works (no API key, no GPU, no hardware):**
 
-- Vierschichtiges Gedächtnissystem (SQLite-Backend, Zwei-Puffer-Konsolidierung)
-- Bayes'sches Weltmodell (Gaussian Process) mit Unsicherheitsschätzung und
-  Vorschlagsfunktion für nächste Experimente
-- Simuliertes Labor als Platzhalter für echte Robotik
-- Verifikationsschicht, die keine unbelegten Behauptungen durchlässt
-- Gefahrstoff-Screening und Governance-Gate mit Audit-Log
-- Multi-Agenten-Hypothesen-Pipeline (mit Mock-LLM lauffähig)
-- Vierschichtiger Evaluierungs-Stack
+- Four-layer memory system (SQLite backend, two-buffer consolidation)
+- Bayesian world model (Gaussian process) with uncertainty estimation and a
+  proposal function for the next experiment
+- Simulated lab as a placeholder for real robotics
+- Verification layer that lets no unsupported claim through
+- Hazardous-material screening and a governance gate with an audit log
+- Multi-agent hypothesis pipeline (runnable with a mock LLM)
+- Four-layer evaluation stack
 
-**Was bewusst noch nicht funktioniert:** echtes kontinuierliches Gewichts-Lernen
-(LoRA-Adapter, Konsolidierung) und die Anbindung an echte Laborhardware sind
-spätere Phasen (siehe `ROADMAP.md`) — als dokumentierte Interfaces angelegt,
-nicht als Code (Prinzip „Phasendisziplin", siehe `CLAUDE.md`).
+**What deliberately does not work yet:** genuine continual weight learning
+(LoRA adapters, consolidation) and the connection to real lab hardware are later
+phases (see `ROADMAP.md`) — laid out as documented interfaces, not as code
+(the "phase discipline" principle, see `CLAUDE.md`).
 
-## Architektur
+## Architecture
 
 ```
 src/continuum/
-├── llm/            # Anbieterunabhängige LLM-Schnittstelle + Mock
-├── memory/         # Working/Episodic/Semantic/Procedural Memory
-├── learning/       # Drei-Geschwindigkeiten-Lernsystem
-├── hypothesis/     # Multi-Agenten-Hypothesen-Tournament
-├── worldmodel/     # Bayes'sches Surrogatmodell
-├── verification/   # Anti-Halluzinations-Schicht
-├── safety/         # Gefahrstoff-Screening & Governance
-├── eval/           # Vier-Ebenen-Evaluierung
-└── data/           # Simuliertes Labor (Phase-0-Platzhalter für Hardware)
+├── llm/            # Provider-agnostic LLM interface + mock
+├── memory/         # Working/Episodic/Semantic/Procedural memory
+├── learning/       # Three-speed learning system
+├── hypothesis/     # Multi-agent hypothesis tournament
+├── worldmodel/     # Bayesian surrogate model
+├── verification/   # Anti-hallucination layer
+├── safety/         # Hazardous-material screening & governance
+├── eval/           # Four-level evaluation
+└── data/           # Simulated lab (Phase-0 placeholder for hardware)
 ```
 
-Vollständige Spezifikation je Modul in `ARCHITECTURE.md`, aktueller Backlog in `TASKS.md`.
+Full per-module specification in `ARCHITECTURE.md`, current backlog in `TASKS.md`.
 
 ## Quickstart
 
@@ -66,7 +65,7 @@ python -m venv .venv
 source .venv/bin/activate
 pip install -e ".[dev]"
 
-python scripts/run_demo_loop.py     # kompletter Zyklus auf simulierten Daten
+python scripts/run_demo_loop.py     # full cycle on simulated data
 ```
 
 ## Tests
@@ -75,11 +74,11 @@ python scripts/run_demo_loop.py     # kompletter Zyklus auf simulierten Daten
 pytest
 ```
 
-## Lizenz
+## License
 
-MIT — siehe [`LICENSE`](LICENSE). © 2026 Sebastian Renker.
+MIT — see [`LICENSE`](LICENSE). © 2026 Sebastian Renker.
 
-Forschungs-/Konzeptprototyp, kein Produktivsystem. Sicherheitsrelevante
-Komponenten (`safety/hazard_screening.py`) enthalten nur ein Beispiel-Regelwerk
-und müssen vor jeder Verwendung mit realen Materialien von Fachleuten geprüft und
-erweitert werden (siehe `TASKS.md`, D5).
+Research/concept prototype, not a production system. The safety-relevant
+components (`safety/hazard_screening.py`) contain only an example rule set and
+must be reviewed and extended by domain experts before any use with real
+materials (see `TASKS.md`, D5).
