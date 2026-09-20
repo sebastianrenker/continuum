@@ -1,10 +1,10 @@
-"""Bayes'sches Surrogatmodell fuer die Wahrnehmungs-/Weltmodell-Schicht.
+"""A Bayesian surrogate model for the perception/world-model layer.
 
-Siehe ARCHITECTURE.md, Abschnitt 4, und Konzeptpapier Kapitel 5.1. Bewusst
-KEIN Versuch, das allgemeine (ungeloeste) Problem intuitiver Physik zu
-loesen — stattdessen eine eng gefasste, tractable Regressionsaufgabe:
-Syntheseparameter -> Materialeigenschaft, mit expliziter
-Unsicherheitsschaetzung.
+See ARCHITECTURE.md, section 4, and the concept paper chapter 5.1. Deliberately
+NO attempt to solve the general (unsolved) problem of intuitive physics —
+instead a narrowly scoped, tractable regression task:
+synthesis parameters -> material property, with explicit
+uncertainty estimation.
 """
 
 from __future__ import annotations
@@ -15,9 +15,9 @@ from sklearn.gaussian_process.kernels import RBF, WhiteKernel
 
 
 class SurrogateModel:
-    """Gaussian-Process-Regression mit Expected-Improvement-Akquisition.
+    """Gaussian-process regression with expected-improvement acquisition.
 
-    Nutzung:
+    Usage:
         model = SurrogateModel()
         model.fit(X, y)
         mean, std = model.predict(X_new)
@@ -38,28 +38,28 @@ class SurrogateModel:
         self._best_y = float(np.max(y))
 
     def predict(self, X: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
-        """Liefert (mean, std) — NIEMALS nur einen Punktwert.
+        """Returns (mean, std) — NEVER only a point value.
 
-        Siehe CLAUDE.md, Prinzip 1: jede Aussage braucht eine
-        Unsicherheitsangabe, wenn sie keine direkte Messung ist.
+        See CLAUDE.md, principle 1: every statement needs an
+        uncertainty estimate if it is not a direct measurement.
         """
         if not self._fitted:
-            raise RuntimeError("SurrogateModel muss vor predict() mit fit() trainiert werden.")
+            raise RuntimeError("SurrogateModel must be trained with fit() before predict().")
         X = np.atleast_2d(X)
         mean, std = self._gp.predict(X, return_std=True)
         return mean, std
 
     def suggest_next(self, bounds: list[tuple[float, float]], n: int = 1, n_candidates: int = 500,
                       random_state: int = 0) -> np.ndarray:
-        """Schlaegt die naechsten `n` Experimentparameter per Expected Improvement vor.
+        """Suggests the next `n` experiment parameters via expected improvement.
 
-        Phase-0-Implementierung: Zufalls-Sampling im Suchraum +
-        Ranking nach Expected Improvement, statt eines vollen
-        Gradienten-basierten Optimierers — ausreichend fuer niedrigdimensionale
-        Materialparameterraeume (siehe Konzeptpapier Kapitel 5.1).
+        Phase-0 implementation: random sampling in the search space +
+        ranking by expected improvement, instead of a full
+        gradient-based optimizer — sufficient for low-dimensional
+        material-parameter spaces (see the concept paper chapter 5.1).
         """
         if not self._fitted:
-            # Vor dem ersten Fit: gleichverteiltes Sampling (reine Exploration).
+            # Before the first fit: uniform sampling (pure exploration).
             rng = np.random.default_rng(random_state)
             return np.array([
                 [rng.uniform(lo, hi) for lo, hi in bounds] for _ in range(n)

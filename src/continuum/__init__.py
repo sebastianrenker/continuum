@@ -1,7 +1,7 @@
-"""CONTINUUM — kontinuierlich lernendes autonomes Forschungssystem (Phase-0-Prototyp).
+"""CONTINUUM — continually learning autonomous research system (phase-0 prototype).
 
-Siehe ARCHITECTURE.md für die vollständige Spezifikation und CLAUDE.md für
-die verbindlichen Arbeitsregeln an diesem Code.
+See ARCHITECTURE.md for the full specification and CLAUDE.md for
+the binding working rules for this code.
 """
 
 __version__ = "0.1.0"

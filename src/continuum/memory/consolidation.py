@@ -1,9 +1,9 @@
-"""Zwei-Puffer-Konsolidierung: heisser Probepuffer -> validiertes Langzeitgedaechtnis.
+"""Two-buffer consolidation: a hot trial buffer -> validated long-term memory.
 
-Siehe ARCHITECTURE.md, Abschnitt 1, und Konzeptpapier Kapitel 5.2. Neue
-Records sind per Default `validated=False` (siehe memory/models.py) und
-werden erst nach dieser Pruefung fuer `validated_only=True`-Suchen
-sichtbar (siehe memory/store.py::search).
+See ARCHITECTURE.md, section 1, and the concept paper chapter 5.2. New
+records are by default `validated=False` (see memory/models.py) and
+only become visible to `validated_only=True` searches after this check
+(see memory/store.py::search).
 """
 
 from __future__ import annotations
@@ -25,9 +25,9 @@ class ConsolidationReport:
 
 
 class Consolidator:
-    """Prueft Records aus dem heissen Puffer und befoerdert valide Eintraege.
+    """Checks records from the hot buffer and promotes valid entries.
 
-    Nutzung:
+    Usage:
         consolidator = Consolidator(store)
         report = consolidator.run_consolidation_pass()
     """
@@ -58,11 +58,11 @@ class Consolidator:
         )
 
     def _pending_records(self) -> list[MemoryRecord]:
-        # Phase-0-Implementierung: einfacher Scan ueber alle unvalidierten
-        # Records via Suche mit leerem Query-Text ist ungenau; stattdessen
-        # direkter SQL-Zugriff ueber eine Hilfsmethode waere sauberer,
-        # bleibt hier aber bewusst auf der oeffentlichen Store-API, um die
-        # Schnittstelle stabil zu halten.
+        # Phase-0 implementation: a simple scan over all unvalidated
+        # records via a search with an empty query text is imprecise; instead
+        # direct SQL access via a helper method would be cleaner,
+        # but stays here deliberately on the public store API, to keep the
+        # interface stable.
         results = self._store.search("", k=10_000, validated_only=False)
         return [rec for rec, _ in results if not rec.validated]
 

@@ -1,9 +1,9 @@
-"""ClaimChecker: setzt das Anti-Halluzinations-Prinzip technisch durch.
+"""ClaimChecker: technically enforces the anti-hallucination principle.
 
-Siehe ARCHITECTURE.md, Abschnitt 6. Claims ohne gueltige Herkunfts-
-kennzeichnung UND ohne passenden Beleg im MemoryStore werden hart
-abgelehnt (Exception), nicht nur mit einer Warnung versehen — siehe
-CLAUDE.md, Prinzip 1.
+See ARCHITECTURE.md, section 6. Claims without a valid provenance
+tag AND without a matching piece of evidence in the MemoryStore are hard-
+rejected (an exception), not merely flagged with a warning — see
+CLAUDE.md, principle 1.
 """
 
 from __future__ import annotations
@@ -15,7 +15,7 @@ from continuum.verification.evidence import Claim, Evidence
 
 
 class InvalidClaimError(Exception):
-    """Wird geworfen, wenn ein Claim keinen gueltigen Beleg hat."""
+    """Raised when a claim has no valid evidence."""
 
 
 @dataclass
@@ -33,7 +33,7 @@ class ClaimChecker:
         result = self._check(claim)
         if raise_on_invalid and not result.is_valid:
             raise InvalidClaimError(
-                f"Claim abgelehnt ({result.reason}): '{claim.text}'"
+                f"Claim rejected ({result.reason}): '{claim.text}'"
             )
         return result
 
@@ -41,23 +41,23 @@ class ClaimChecker:
         if claim.evidence_kind == Evidence.EXPERIMENTAL:
             record = self._store.get(claim.source_ref)
             if record is None:
-                return VerificationResult(claim, False, "EXPERIMENTAL-Claim ohne auffindbaren Beleg-Record")
+                return VerificationResult(claim, False, "EXPERIMENTAL claim without a findable evidence record")
             if not record.validated:
                 return VerificationResult(
-                    claim, False, "EXPERIMENTAL-Claim verweist auf unvalidierten Record (siehe consolidation.py)"
+                    claim, False, "EXPERIMENTAL claim references an unvalidated record (see consolidation.py)"
                 )
-            return VerificationResult(claim, True, "belegt durch validierten Experiment-Record")
+            return VerificationResult(claim, True, "substantiated by a validated experiment record")
 
         if claim.evidence_kind == Evidence.PREDICTED:
             if claim.confidence >= 0.999:
                 return VerificationResult(
-                    claim, False, "PREDICTED-Claim mit Konfidenz ~1.0 ist verdaechtig ueberzuversichtlich"
+                    claim, False, "PREDICTED claim with confidence ~1.0 is suspiciously overconfident"
                 )
-            return VerificationResult(claim, True, "Modellvorhersage mit kalibrierter Unsicherheit")
+            return VerificationResult(claim, True, "a model prediction with calibrated uncertainty")
 
         if claim.evidence_kind == Evidence.LITERATURE:
             if not claim.source_ref.strip():
-                return VerificationResult(claim, False, "LITERATURE-Claim ohne Quellenangabe")
-            return VerificationResult(claim, True, "Literaturzitat mit Quellenangabe")
+                return VerificationResult(claim, False, "LITERATURE claim without a source reference")
+            return VerificationResult(claim, True, "a literature citation with a source reference")
 
-        return VerificationResult(claim, False, "unbekannte Evidence-Kategorie")
+        return VerificationResult(claim, False, "unknown evidence category")

@@ -1,13 +1,13 @@
-"""Geschwindigkeit 1 — Sofortlernen (Token-Raum, kein Gradienten-Update).
+"""Speed 1 — instant learning (token space, no gradient update).
 
-Siehe ARCHITECTURE.md, Abschnitt 2, und Konzeptpapier Kapitel 5.3.
-Letta/MemGPT-Stil: das System selbst entscheidet ueber Tool-Aufrufe, was
-geschrieben, abgerufen oder vergessen wird. Diese drei Funktionen SIND die
-"Tools", die einem Agenten (bzw. `hypothesis`-Agenten) zur Verfuegung
-gestellt werden koennen.
+See ARCHITECTURE.md, section 2, and the concept paper chapter 5.3.
+Letta/MemGPT style: the system itself decides via tool calls what
+is written, retrieved, or forgotten. These three functions ARE the
+"tools" that can be made available to an agent (or `hypothesis`
+agent).
 
-Dies ist die einzige Lernkomponente, die in Phase 0 vollstaendig
-funktionsfaehig sein muss — kein Training noetig, nur der MemoryStore.
+This is the only learning component that must be fully functional
+in phase 0 — no training needed, only the MemoryStore.
 """
 
 from __future__ import annotations
@@ -17,10 +17,10 @@ from continuum.memory.store import MemoryStore
 
 
 def remember(store: MemoryStore, text: str, *, source: str = "agent", importance: float = 0.5) -> MemoryRecord:
-    """Schreibt eine neue Beobachtung ins (unvalidierte) Kern-Gedaechtnis.
+    """Writes a new observation into the (unvalidated) core memory.
 
-    Landet zunaechst im heissen Puffer — siehe memory/consolidation.py fuer
-    den Weg ins Langzeitgedaechtnis.
+    Lands first in the hot buffer — see memory/consolidation.py for
+    the path into long-term memory.
     """
     record = MemoryRecord(
         text=text,
@@ -34,13 +34,13 @@ def remember(store: MemoryStore, text: str, *, source: str = "agent", importance
 
 
 def recall(store: MemoryStore, query: str, k: int = 5) -> list[tuple[MemoryRecord, float]]:
-    """Ruft die `k` relevantesten Records zu `query` ab, unabhaengig von der Schicht."""
+    """Retrieves the `k` most relevant records for `query`, independent of the layer."""
     return store.search(query, k=k)
 
 
 def forget(store: MemoryStore, record_id: str) -> None:
-    """Entfernt einen Record explizit. Bewusst kein "stilles" Vergessen —
-    jeder Aufruf sollte in einer spaeteren Phase auditiert werden (siehe
-    safety/governance.py::audit_log), sobald `forget` aus einem
-    Agenten-Kontext statt direkt aufgerufen wird."""
+    """Removes a record explicitly. Deliberately no "silent" forgetting —
+    every call should be audited in a later phase (see
+    safety/governance.py::audit_log), once `forget` is called from an
+    agent context instead of directly."""
     store.delete(record_id)

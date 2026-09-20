@@ -1,7 +1,7 @@
-"""Evaluierungs-Harness: fuehrt den vollstaendigen Vier-Ebenen-Stack aus.
+"""Evaluation harness: runs the full four-level stack.
 
-Siehe ARCHITECTURE.md, Abschnitt 8. Grundlage fuer die Go/No-Go-
-Entscheidung am Ende jeder Roadmap-Phase (siehe ROADMAP.md).
+See ARCHITECTURE.md, section 8. The basis for the go/no-go
+decision at the end of each roadmap phase (see ROADMAP.md).
 """
 
 from __future__ import annotations
@@ -66,22 +66,22 @@ def format_report(report: FullEvalReport) -> str:
     lines = [
         "=== CONTINUUM Eval Report ===",
         (
-            f"Ebene 1 (Aufgabenerfolg):  {report.task.n_confirmed}/{report.task.n_hypotheses_tested} "
-            f"bestaetigt (hit_rate={report.task.hit_rate:.2f})"
+            f"Level 1 (task success):  {report.task.n_confirmed}/{report.task.n_hypotheses_tested} "
+            f"confirmed (hit_rate={report.task.hit_rate:.2f})"
         ),
-        f"Ebene 2 (Gedaechtnis):     precision@k={report.memory.precision_at_k:.2f}",
+        f"Level 2 (memory):        precision@k={report.memory.precision_at_k:.2f}",
         (
-            f"Ebene 3 (Effizienz):       Kosten/validierter Hypothese="
+            f"Level 3 (efficiency):    cost/validated hypothesis="
             f"{report.cost.cost_per_validated_hypothesis:.2f}, "
-            f"mittlere Latenz={report.cost.mean_latency_ms:.1f}ms"
+            f"mean latency={report.cost.mean_latency_ms:.1f}ms"
         ),
         (
-            f"Ebene 4 (Governance):      {report.governance.total_events} Ereignisse, "
-            f"Abdeckung={report.governance.audit_coverage:.2%}"
+            f"Level 4 (governance):    {report.governance.total_events} events, "
+            f"coverage={report.governance.audit_coverage:.2%}"
         ),
         (
-            f"Kalibrierung:              MAE={report.calibration.mean_absolute_error:.4f}, "
-            f"innerhalb Unsicherheitsband={report.calibration.within_uncertainty_band_fraction:.2%}"
+            f"Calibration:             MAE={report.calibration.mean_absolute_error:.4f}, "
+            f"within uncertainty band={report.calibration.within_uncertainty_band_fraction:.2%}"
         ),
     ]
     return "\n".join(lines)

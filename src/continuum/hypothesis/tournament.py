@@ -1,6 +1,6 @@
-"""Orchestrierung des Multi-Agenten-Hypothesen-Turniers.
+"""Orchestration of the multi-agent hypothesis tournament.
 
-Siehe ARCHITECTURE.md, Abschnitt 3.
+See ARCHITECTURE.md, section 3.
 """
 
 from __future__ import annotations
@@ -32,10 +32,10 @@ def run_tournament(
     top_k: int = 2,
     rounds: int = 2,
 ) -> TournamentResult:
-    """Fuehrt das vierstufige Turnier ueber `rounds` Runden aus.
+    """Runs the four-stage tournament over `rounds` rounds.
 
-    Generierung -> Reflexion -> Ranking -> Evolution, wobei die
-    verfeinerten Top-Hypothesen jeweils in die naechste Runde eingehen.
+    Generation -> reflection -> ranking -> evolution, where the
+    refined top hypotheses each go into the next round.
     """
     generation = GenerationAgent(llm)
     reflection = ReflectionAgent(llm)
@@ -46,7 +46,7 @@ def run_tournament(
 
     for _ in range(rounds):
         for h in candidates:
-            reflection.critique(h)  # Ergebnis fliesst in Phase 1 in die Bewertung ein
+            reflection.critique(h)  # the result feeds into the scoring in phase 1
         ranked = ranking.rank(candidates)
         top = ranked[:top_k]
         candidates = evolution.refine(top)

@@ -1,9 +1,9 @@
-"""Prozedurales Gedaechtnis: Registry aufrufbarer Laborprotokolle.
+"""Procedural memory: a registry of callable lab protocols.
 
-Siehe ARCHITECTURE.md, Abschnitt 1. Skills sind hier als Python-Callables
-mit Metadaten registriert, nicht nur als Textbeschreibung — der Unterschied
-zwischen "das System weiss, dass es X tun koennte" und "das System kann X
-tatsaechlich ausfuehren" (vgl. Konzeptpapier, Memory-Literatur-Quelle [2]).
+See ARCHITECTURE.md, section 1. Skills are registered here as Python callables
+with metadata, not only as a text description — the difference
+between "the system knows that it could do X" and "the system can actually
+execute X" (cf. the concept paper, memory literature source [2]).
 """
 
 from __future__ import annotations
@@ -33,7 +33,7 @@ class ProceduralMemory:
     def invoke(self, name: str, *args, **kwargs) -> object:
         entry = self.get(name)
         if entry is None:
-            raise KeyError(f"Kein registriertes Skill '{name}' im prozeduralen Gedaechtnis.")
+            raise KeyError(f"No registered skill '{name}' in procedural memory.")
         return entry.fn(*args, **kwargs)
 
     def list_skills(self) -> list[ProceduralSkill]:

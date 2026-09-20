@@ -1,10 +1,10 @@
-"""Embedding-Funktionen fuer den MemoryStore.
+"""Embedding functions for the MemoryStore.
 
-Siehe ARCHITECTURE.md, Abschnitt 1. Der Default-Embedder ist deterministisch
-und offline (kein API-Key noetig), damit `MemoryStore` in Phase 0 vollstaendig
-lauffaehig ist. Eine spaetere Phase kann `embed_text` durch
-`LLMClient.embed` ersetzen, ohne dass sich die `MemoryStore`-Schnittstelle
-aendert.
+See ARCHITECTURE.md, section 1. The default embedder is deterministic
+and offline (no API key needed), so that `MemoryStore` is fully runnable
+in phase 0. A later phase can replace `embed_text` with
+`LLMClient.embed`, without the `MemoryStore` interface
+changing.
 """
 
 from __future__ import annotations
@@ -17,7 +17,7 @@ EmbedFn = Callable[[str], list[float]]
 
 
 def default_embedder() -> EmbedFn:
-    """Liefert den Default-Offline-Embedder (Hashing-basiert, dim=64)."""
+    """Returns the default offline embedder (hashing-based, dim=64)."""
     return _hash_embed
 
 

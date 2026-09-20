@@ -1,4 +1,4 @@
-"""Datenmodelle des Gedaechtnissystems. Siehe ARCHITECTURE.md, Abschnitt 1."""
+"""Data models of the memory system. See ARCHITECTURE.md, section 1."""
 
 from __future__ import annotations
 
@@ -17,7 +17,7 @@ class MemoryKind(str, Enum):
 
 @dataclass
 class MemoryRecord:
-    """Ein einzelner Eintrag im MemoryStore, unabhaengig von der Schicht."""
+    """A single entry in the MemoryStore, independent of the layer."""
 
     text: str
     kind: MemoryKind
@@ -27,12 +27,12 @@ class MemoryRecord:
     embedding: list[float] | None = None
     id: str = field(default_factory=lambda: str(uuid.uuid4()))
     timestamp: float = field(default_factory=time.time)
-    validated: bool = False  # siehe consolidation.py: erst nach Validierung im Langzeitspeicher
+    validated: bool = False  # see consolidation.py: only after validation in long-term storage
 
 
 @dataclass
 class EpisodicEvent:
-    """Ein zeitgestempeltes, konkretes Experimentereignis."""
+    """A timestamped, concrete experiment event."""
 
     description: str
     parameters: dict
@@ -43,7 +43,7 @@ class EpisodicEvent:
 
 @dataclass
 class SemanticFact:
-    """Aus mehreren Episoden abstrahiertes Wissen."""
+    """Knowledge abstracted from several episodes."""
 
     statement: str
     confidence: float
@@ -53,9 +53,9 @@ class SemanticFact:
 
 @dataclass
 class ProceduralSkill:
-    """Ein wiederverwendbares, aufrufbares Laborprotokoll."""
+    """A reusable, callable lab protocol."""
 
     name: str
     description: str
-    callable_ref: str  # voll qualifizierter Python-Pfad, z. B. "continuum.data.protocols.synthesize"
+    callable_ref: str  # a fully qualified Python path, e.g. "continuum.data.protocols.synthesize"
     id: str = field(default_factory=lambda: str(uuid.uuid4()))

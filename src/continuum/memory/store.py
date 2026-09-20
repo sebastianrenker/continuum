@@ -1,14 +1,14 @@
-"""SQLite-basierter MemoryStore mit Cosinus-Aehnlichkeitssuche.
+"""SQLite-based MemoryStore with cosine-similarity search.
 
-Siehe ARCHITECTURE.md, Abschnitt 1. Diese Klasse ist die gemeinsame
-Persistenzschicht fuer alle vier Gedaechtnisebenen (working/episodic/
-semantic/procedural) — die duennen Wrapper in working.py/episodic.py/
-semantic.py/procedural.py rufen ausschliesslich `MemoryStore`-Methoden auf.
+See ARCHITECTURE.md, section 1. This class is the shared
+persistence layer for all four memory levels (working/episodic/
+semantic/procedural) — the thin wrappers in working.py/episodic.py/
+semantic.py/procedural.py call exclusively `MemoryStore` methods.
 
-Design-Entscheidung Phase 0: SQLite statt echter Vektor-DB, weil das
-Akzeptanzkriterium (10.000 Records, < 200ms Suche) damit ohne zusaetzliche
-Infrastruktur erreichbar ist. Ersatz durch eine echte Vektor-DB (z. B.
-Chroma/Qdrant) in einer spaeteren Phase aendert diese Schnittstelle nicht.
+Design decision phase 0: SQLite instead of a real vector DB, because the
+acceptance criterion (10,000 records, < 200 ms search) is achievable with it without additional
+infrastructure. Replacement with a real vector DB (e.g.
+Chroma/Qdrant) in a later phase does not change this interface.
 """
 
 from __future__ import annotations
@@ -38,12 +38,12 @@ CREATE INDEX IF NOT EXISTS idx_validated ON memory_records(validated);
 
 
 class MemoryStore:
-    """CRUD + semantische Suche ueber alle Gedaechtnis-Records.
+    """CRUD + semantic search over all memory records.
 
-    Nutzung:
-        store = MemoryStore(":memory:")   # oder ein Dateipfad fuer Persistenz
+    Usage:
+        store = MemoryStore(":memory:")   # or a file path for persistence
         store.write(record)
-        hits = store.search("Ionenleitfaehigkeit", k=5)
+        hits = store.search("ionic conductivity", k=5)
     """
 
     def __init__(self, path: str | Path = ":memory:", embed_fn: EmbedFn | None = None) -> None:
@@ -101,12 +101,12 @@ class MemoryStore:
         kind: MemoryKind | None = None,
         validated_only: bool = False,
     ) -> list[tuple[MemoryRecord, float]]:
-        """Cosinus-Aehnlichkeitssuche. Gibt (Record, Score) absteigend sortiert zurueck.
+        """Cosine-similarity search. Returns (record, score) sorted descending.
 
-        Phase-0-Implementierung: Brute-Force ueber alle passenden Records.
-        Ausreichend fuer das Akzeptanzkriterium aus ARCHITECTURE.md
-        (10.000 Records, < 200ms) — bei deutlich groesserem Datenvolumen
-        waere ein approximativer Nearest-Neighbor-Index (z. B. HNSW) noetig.
+        Phase-0 implementation: brute force over all matching records.
+        Sufficient for the acceptance criterion from ARCHITECTURE.md
+        (10,000 records, < 200 ms) — with a significantly larger data volume,
+        an approximate nearest-neighbor index (e.g. HNSW) would be needed.
         """
         query_vec = self._embed_fn(query)
         sql = "SELECT * FROM memory_records WHERE 1=1"

@@ -1,8 +1,8 @@
-"""Herkunftskennzeichnung fuer jede Aussage des Systems.
+"""Provenance tagging for every statement of the system.
 
-Siehe ARCHITECTURE.md, Abschnitt 6, und Konzeptpapier Kapitel 5.6:
-"keine unbelegte Behauptung". Jede Aussage traegt genau eine der drei
-Kategorien in `Evidence`.
+See ARCHITECTURE.md, section 6, and the concept paper chapter 5.6:
+"no unsubstantiated claim". Every statement carries exactly one of the three
+categories in `Evidence`.
 """
 
 from __future__ import annotations
@@ -12,22 +12,22 @@ from enum import Enum
 
 
 class Evidence(str, Enum):
-    EXPERIMENTAL = "experimental"  # direkte Messung, mit Verweis auf Reproduzierbarkeit
-    PREDICTED = "predicted"        # Modellvorhersage MIT kalibrierter Unsicherheit
-    LITERATURE = "literature"      # Zitat mit Quellenangabe
+    EXPERIMENTAL = "experimental"  # a direct measurement, with a reference to reproducibility
+    PREDICTED = "predicted"        # a model prediction WITH calibrated uncertainty
+    LITERATURE = "literature"      # a citation with a source reference
 
 
 @dataclass
 class Claim:
-    """Eine einzelne, ueberpruefbare Aussage des Systems."""
+    """A single, verifiable statement of the system."""
 
     text: str
     evidence_kind: Evidence
-    confidence: float  # in [0, 1]; bei EXPERIMENTAL i. d. R. nahe 1.0
-    source_ref: str  # Record-ID im MemoryStore, Zitat-Key oder Modell-Run-ID
+    confidence: float  # in [0, 1]; for EXPERIMENTAL usually close to 1.0
+    source_ref: str  # a record ID in the MemoryStore, a citation key, or a model run ID
 
     def __post_init__(self) -> None:
         if not (0.0 <= self.confidence <= 1.0):
-            raise ValueError(f"confidence muss in [0, 1] liegen, war {self.confidence}")
+            raise ValueError(f"confidence must be in [0, 1], was {self.confidence}")
         if not self.source_ref:
-            raise ValueError("source_ref darf nicht leer sein — jede Aussage braucht einen Beleg.")
+            raise ValueError("source_ref must not be empty — every statement needs evidence.")

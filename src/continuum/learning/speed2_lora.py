@@ -1,22 +1,22 @@
-"""Geschwindigkeit 2 — Faehigkeitsaufbau (LoRA-Adapter, taeglich-woechentlich).
+"""Speed 2 — capability building (LoRA adapters, daily-weekly).
 
-Siehe ARCHITECTURE.md, Abschnitt 2, und Konzeptpapier Kapitel 5.3.
+See ARCHITECTURE.md, section 2, and the concept paper chapter 5.3.
 
-STATUS: Absichtlich NICHT implementiert in Phase 0 — siehe CLAUDE.md,
-Prinzip 4 (Phasendisziplin), und TASKS.md, Block F2. Dieses Modul definiert
-das Interface, das eine spaetere Phase-2-Implementierung erfuellen muss,
-mit den konkret vorgesehenen Techniken:
+STATUS: deliberately NOT implemented in phase 0 — see CLAUDE.md,
+principle 4 (phase discipline), and TASKS.md, block F2. This module defines
+the interface a later phase-2 implementation must fulfill,
+with the concretely intended techniques:
 
-- LoRA-Adapter (~0.1-1% der Parameterzahl) via PEFT/transformers
-- Contextual Experience Replay (CER): Training auf zusammengefassten,
-  realen Erfahrungssequenzen aus memory.episodic
-- Orthogonal Subspace Learning (O-LoRA): neue Adapter fuer Teildomaenen
-  werden orthogonal zu bestehenden Adapter-Gradientenrichtungen trainiert,
-  um gegenseitiges Ueberschreiben zu verhindern
+- LoRA adapters (~0.1-1% of the parameter count) via PEFT/transformers
+- Contextual Experience Replay (CER): training on summarized,
+  real experience sequences from memory.episodic
+- Orthogonal Subspace Learning (O-LoRA): new adapters for subdomains
+  are trained orthogonally to existing adapter gradient directions,
+  to prevent mutual overwriting
 
-Bevor dieses Modul implementiert wird, muessen die Go/No-Go-Kriterien aus
-ROADMAP.md fuer Phase 0 erfuellt sein UND ein GPU-faehiges Trainings-Setup
-vorhanden sein (siehe pyproject.toml, optionale Abhaengigkeit "phase2").
+Before this module is implemented, the go/no-go criteria from
+ROADMAP.md for phase 0 must be met AND a GPU-capable training setup
+must be present (see pyproject.toml, the optional dependency "phase2").
 """
 
 from __future__ import annotations
@@ -25,14 +25,14 @@ from continuum.memory.store import MemoryStore
 
 
 class Speed2LoRALearner:
-    """Interface fuer das woechentliche Adapter-Training.
+    """The interface for the weekly adapter training.
 
-    TODO(Phase 2): Implementieren mit `peft.LoraConfig` + O-LoRA-
-    Orthogonalitaetsbeschraenkung. Trainingsdaten kommen aus
-    `memory.episodic.EpisodicMemory.recall_similar` (CER-Muster: nur
-    validierte, zusammengefasste Erfahrungssequenzen, kein rohes Replay
-    ganzer Rohdaten aus Datenschutzgruenden — siehe Konzeptpapier,
-    Tradeoff-Tabelle in Kapitel 5.3).
+    TODO(Phase 2): implement with `peft.LoraConfig` + the O-LoRA
+    orthogonality constraint. The training data comes from
+    `memory.episodic.EpisodicMemory.recall_similar` (the CER pattern: only
+    validated, summarized experience sequences, no raw replay
+    of whole raw data for privacy reasons — see the concept paper,
+    the trade-off table in chapter 5.3).
     """
 
     def __init__(self, base_model_ref: str, memory_store: MemoryStore) -> None:
@@ -41,7 +41,7 @@ class Speed2LoRALearner:
 
     def train_adapter(self, domain_tag: str) -> None:
         raise NotImplementedError(
-            "Speed2LoRALearner.train_adapter ist fuer Phase 2 vorgesehen. "
-            "Siehe ARCHITECTURE.md Abschnitt 2 und TASKS.md Block F2. "
-            "Nicht in Phase 0 implementieren (CLAUDE.md, Phasendisziplin)."
+            "Speed2LoRALearner.train_adapter is intended for phase 2. "
+            "See ARCHITECTURE.md section 2 and TASKS.md block F2. "
+            "Do not implement in phase 0 (CLAUDE.md, phase discipline)."
         )

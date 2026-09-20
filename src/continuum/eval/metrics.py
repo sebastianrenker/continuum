@@ -1,6 +1,6 @@
-"""Vier-Ebenen-Evaluierungs-Stack + domaenenspezifische Metriken.
+"""Four-level evaluation stack + domain-specific metrics.
 
-Siehe ARCHITECTURE.md, Abschnitt 8, und Konzeptpapier Kapitel 6.
+See ARCHITECTURE.md, section 8, and the concept paper chapter 6.
 """
 
 from __future__ import annotations
@@ -10,7 +10,7 @@ from dataclasses import dataclass
 
 @dataclass
 class TaskEffectivenessReport:
-    """Ebene 1: Aufgabenerfolg."""
+    """Level 1: task success."""
 
     n_hypotheses_tested: int
     n_confirmed: int
@@ -22,7 +22,7 @@ class TaskEffectivenessReport:
 
 @dataclass
 class MemoryQualityReport:
-    """Ebene 2: Gedaechtnisqualitaet."""
+    """Level 2: memory quality."""
 
     precision_at_k: float
     contradiction_rate: float
@@ -30,7 +30,7 @@ class MemoryQualityReport:
 
 @dataclass
 class EfficiencyReport:
-    """Ebene 3: Effizienz."""
+    """Level 3: efficiency."""
 
     cost_per_validated_hypothesis: float
     mean_latency_ms: float
@@ -38,22 +38,22 @@ class EfficiencyReport:
 
 @dataclass
 class GovernanceReport:
-    """Ebene 4: Governance."""
+    """Level 4: governance."""
 
     total_events: int
-    audit_coverage: float  # Anteil der Ereignisse mit vollstaendigen Pflichtfeldern
+    audit_coverage: float  # the fraction of events with complete mandatory fields
 
 
 @dataclass
 class CalibrationReport:
-    """Domaenenspezifisch: Vorhersage vs. tatsaechliche Materialeigenschaft."""
+    """Domain-specific: prediction vs. actual material property."""
 
     mean_absolute_error: float
-    within_uncertainty_band_fraction: float  # Anteil, bei dem |pred - actual| <= std
+    within_uncertainty_band_fraction: float  # the fraction where |pred - actual| <= std
 
 
 def task_effectiveness(records: list[dict]) -> TaskEffectivenessReport:
-    """`records`: Liste von {"tested": bool, "confirmed": bool}."""
+    """`records`: a list of {"tested": bool, "confirmed": bool}."""
     tested = [r for r in records if r.get("tested")]
     confirmed = [r for r in tested if r.get("confirmed")]
     return TaskEffectivenessReport(n_hypotheses_tested=len(tested), n_confirmed=len(confirmed))
@@ -69,7 +69,7 @@ def memory_quality(retrieved_ids: list[str], relevant_ids: list[str]) -> MemoryQ
 
 
 def efficiency(run_log: list[dict]) -> EfficiencyReport:
-    """`run_log`: Liste von {"cost": float, "latency_ms": float, "validated": bool}."""
+    """`run_log`: a list of {"cost": float, "latency_ms": float, "validated": bool}."""
     if not run_log:
         return EfficiencyReport(cost_per_validated_hypothesis=0.0, mean_latency_ms=0.0)
     total_cost = sum(r.get("cost", 0.0) for r in run_log)
@@ -88,7 +88,7 @@ def governance_compliance(audit_events: list[dict]) -> GovernanceReport:
 
 
 def calibration_curve(predictions: list[tuple[float, float]], outcomes: list[float]) -> CalibrationReport:
-    """`predictions`: Liste von (mean, std) je Vorhersage; `outcomes`: tatsaechliche Werte."""
+    """`predictions`: a list of (mean, std) per prediction; `outcomes`: the actual values."""
     if not predictions or len(predictions) != len(outcomes):
         return CalibrationReport(mean_absolute_error=float("nan"), within_uncertainty_band_fraction=0.0)
     errors = []
@@ -105,11 +105,11 @@ def calibration_curve(predictions: list[tuple[float, float]], outcomes: list[flo
 
 
 def forgetting_rate(pre_scores: list[float], post_scores: list[float]) -> float:
-    """Anteil der Faehigkeits-Einbusse auf einem Referenz-Aufgabenset.
+    """The fraction of capability loss on a reference task set.
 
-    0.0 = kein Vergessen, 1.0 = vollstaendiger Verlust. Siehe Konzeptpapier
-    Kapitel 5.3/9: mit EWC empirisch ca. 0.0685 statt 0.1262 ohne Schutz —
-    dieses Modul misst denselben Kennwert fuer die eigene Implementierung.
+    0.0 = no forgetting, 1.0 = complete loss. See the concept paper
+    chapter 5.3/9: with EWC empirically about 0.0685 instead of 0.1262 without protection —
+    this module measures the same metric for the own implementation.
     """
     if not pre_scores or len(pre_scores) != len(post_scores):
         return float("nan")

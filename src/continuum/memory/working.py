@@ -1,9 +1,9 @@
-"""Arbeitsgedaechtnis: kapazitaetsbegrenzter Kontext der laufenden Aufgabe.
+"""Working memory: capacity-limited context of the running task.
 
-Siehe ARCHITECTURE.md, Abschnitt 1. Bewusst NICHT im MemoryStore persistiert
-— das Arbeitsgedaechtnis ist fluechtig per Definition (vgl. CLAUDE.md,
-Prinzip 5: "lange Kontextfenster sind kein Gedaechtnis"). Was ueberdauern
-soll, muss explizit ins episodische Gedaechtnis geschrieben werden.
+See ARCHITECTURE.md, section 1. Deliberately NOT persisted in the MemoryStore
+— working memory is ephemeral by definition (cf. CLAUDE.md,
+principle 5: "long context windows are not memory"). What should
+persist must be explicitly written to episodic memory.
 """
 
 from __future__ import annotations
@@ -12,7 +12,7 @@ from collections import deque
 
 
 class WorkingMemory:
-    """LRU-artiger Kurzzeitpuffer fuer die aktuell laufende Aufgabe."""
+    """An LRU-like short-term buffer for the currently running task."""
 
     def __init__(self, capacity: int = 20) -> None:
         self._capacity = capacity

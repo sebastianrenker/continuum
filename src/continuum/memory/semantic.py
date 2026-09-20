@@ -1,8 +1,8 @@
-"""Semantisches Gedaechtnis: aus Episoden abstrahiertes, dekontextualisiertes Wissen.
+"""Semantic memory: knowledge abstracted and decontextualized from episodes.
 
-Siehe ARCHITECTURE.md, Abschnitt 1. Phase 0: regelbasierte Aggregation
-(Haeufigkeitsschwelle). Eine spaetere Phase kann dies durch LLM-gestuetzte
-Zusammenfassung ersetzen (via `LLMClient`), ohne die Schnittstelle zu aendern.
+See ARCHITECTURE.md, section 1. Phase 0: rule-based aggregation
+(a frequency threshold). A later phase can replace this with LLM-supported
+summarization (via `LLMClient`) without changing the interface.
 """
 
 from __future__ import annotations
@@ -12,7 +12,7 @@ from collections import Counter
 from continuum.memory.models import MemoryKind, MemoryRecord, SemanticFact
 from continuum.memory.store import MemoryStore
 
-_MIN_SUPPORT = 3  # Mindestanzahl uebereinstimmender Episoden fuer eine Abstraktion
+_MIN_SUPPORT = 3  # the minimum number of matching episodes for an abstraction
 
 
 class SemanticMemory:
@@ -26,7 +26,7 @@ class SemanticMemory:
             source=source,
             importance=min(1.0, fact.confidence),
             tags=("semantic", *fact.supporting_episode_ids),
-            validated=True,  # semantische Fakten entstehen erst nach Validierung der Episoden
+            validated=True,  # semantic facts arise only after validation of the episodes
         )
         return self._store.write(record)
 
@@ -34,12 +34,12 @@ class SemanticMemory:
         return self._store.search(query, k=k, kind=MemoryKind.SEMANTIC, validated_only=True)
 
     def abstract_from_tags(self, tag_texts: list[str]) -> SemanticFact | None:
-        """Sehr einfache regelbasierte Abstraktion (Phase 0).
+        """A very simple rule-based abstraction (phase 0).
 
-        Zaehlt haeufige Formulierungen in einer Liste von Episoden-Texten und
-        erzeugt einen SemanticFact, wenn eine Formulierung oefter als
-        `_MIN_SUPPORT` vorkommt. Kein Ersatz fuer echte NLU — bewusst simpel,
-        siehe Docstring-Kopf.
+        Counts frequent phrasings in a list of episode texts and
+        produces a SemanticFact if a phrasing occurs more often than
+        `_MIN_SUPPORT`. No substitute for real NLU — deliberately simple,
+        see the docstring header.
         """
         counter = Counter(tag_texts)
         if not counter:

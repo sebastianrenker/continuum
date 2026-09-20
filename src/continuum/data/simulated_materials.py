@@ -1,12 +1,12 @@
-"""Simuliertes Labor: Phase-0-Platzhalter fuer die robotische Ausfuehrungsschicht.
+"""Simulated lab: a phase-0 placeholder for the robotic execution layer.
 
-Siehe ARCHITECTURE.md, Abschnitt 5, und Konzeptpapier Kapitel 5.5. Diese
-Klasse ersetzt in Phase 0 echte Roboter-Hardware durch eine feste, aber
-verrauschte Zielfunktion, damit `worldmodel.SurrogateModel` etwas Echtes zu
-lernen hat. `run_experiment()` ist so geschnitten, dass sie 1:1 durch eine
-echte Laboranbindung ersetzt werden kann (siehe ROADMAP.md, Phase 1) —
-Aufrufer duerfen sich niemals auf Implementierungsdetails dieser Klasse
-verlassen, nur auf die Signatur von `run_experiment`.
+See ARCHITECTURE.md, section 5, and the concept paper chapter 5.5. This
+class replaces real robot hardware in phase 0 with a fixed but
+noisy objective function, so that `worldmodel.SurrogateModel` has something real to
+learn. `run_experiment()` is cut so that it can be replaced 1:1 by a
+real lab connection (see ROADMAP.md, phase 1) —
+callers must never rely on implementation details of this class,
+only on the signature of `run_experiment`.
 """
 
 from __future__ import annotations
@@ -19,18 +19,18 @@ from dataclasses import dataclass
 @dataclass
 class ExperimentResult:
     parameters: dict[str, float]
-    ionic_conductivity: float  # simulierte Zielgroesse, willkuerliche Einheit
+    ionic_conductivity: float  # the simulated target quantity, in an arbitrary unit
     noise_std: float
 
 
 class SimulatedLab:
-    """Simuliert die Synthese eines Festkoerperelektrolyten.
+    """Simulates the synthesis of a solid-state electrolyte.
 
-    Die "wahre" Zielfunktion ist absichtlich unbekannt fuer den Aufrufer
-    (so wie ein echtes Labor auch keine geschlossene Formel liefert) und nur
-    hier im Simulator kodiert. Sie hat ein einzelnes, klar definiertes
-    Optimum, damit sich Lernfortschritt des Weltmodells eindeutig messen
-    laesst (vgl. ROADMAP.md, Phase-0-Kriterium: sinkender Vorhersagefehler).
+    The "true" objective function is deliberately unknown to the caller
+    (just as a real lab does not provide a closed formula either) and only
+    encoded here in the simulator. It has a single, clearly defined
+    optimum, so that the world model's learning progress can be measured
+    unambiguously (cf. ROADMAP.md, phase-0 criterion: a decreasing prediction error).
     """
 
     def __init__(self, seed: int = 7, noise_std: float = 0.05) -> None:
@@ -38,8 +38,8 @@ class SimulatedLab:
         self._noise_std = noise_std
 
     def run_experiment(self, parameters: dict[str, float]) -> ExperimentResult:
-        """Fuehrt eine simulierte Synthese aus. Erwartet Keys 'dopant_fraction'
-        und 'sinter_temp_c' (normalisiert auf [0, 1])."""
+        """Runs a simulated synthesis. Expects keys 'dopant_fraction'
+        and 'sinter_temp_c' (normalized to [0, 1])."""
         x = parameters.get("dopant_fraction", 0.0)
         t = parameters.get("sinter_temp_c", 0.0)
         true_value = self._true_conductivity(x, t)
@@ -52,9 +52,9 @@ class SimulatedLab:
 
     @staticmethod
     def _true_conductivity(x: float, t: float) -> float:
-        # Zwei ueberlagerte Gauss-Huegel als "wahre" Zielfunktion mit einem
-        # globalen Optimum bei (0.3, 0.7) — unbekannt fuer das Weltmodell,
-        # das es durch Bayes'sche Optimierung entdecken soll.
+        # Two superimposed Gaussian hills as the "true" objective function with a
+        # global optimum at (0.3, 0.7) — unknown to the world model,
+        # which is meant to discover it through Bayesian optimization.
         peak1 = math.exp(-(((x - 0.3) ** 2) / 0.02 + ((t - 0.7) ** 2) / 0.02))
         peak2 = 0.4 * math.exp(-(((x - 0.7) ** 2) / 0.05 + ((t - 0.3) ** 2) / 0.05))
         return peak1 + peak2
