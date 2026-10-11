@@ -14,8 +14,8 @@ dev = [
     "pytest>=7.4",
     "ruff>=0.4",
 ]
-# Spätere Phasen (siehe ROADMAP.md) — bewusst NICHT als Kernabhängigkeit,
-# damit Phase 0 ohne GPU/schwere Downloads lauffähig bleibt.
+# Later phases (see ROADMAP.md) — deliberately NOT a core dependency,
+# so Phase 0 runs without a GPU or heavy downloads.
 phase2 = [
     "torch>=2.1",
     "transformers>=4.40",
