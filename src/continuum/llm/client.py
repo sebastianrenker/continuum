@@ -20,11 +20,9 @@ class LLMClient(Protocol):
 
     def complete(self, prompt: str, *, temperature: float = 0.7, max_tokens: int = 512) -> str:
         """Produces a text completion for `prompt`."""
-        ...
 
     def embed(self, text: str) -> list[float]:
         """Produces an embedding vector for `text`."""
-        ...
 
 
 class MockLLMClient:
